@@ -1,0 +1,7 @@
+{
+  "name": "SAFE COPY Expanded Intel Copy 9 of Competitive Intelligence Interface",
+  "description": "Voice-First Competitive Intelligence Agent powered by ElevenLabs and Gemini.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
