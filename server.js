@@ -10,12 +10,15 @@ dotenv.config();
 // -- CONFIGURATION --
 const app = express();
 const PORT = process.env.PORT || 8080;
+// Support both standard env var names for flexibility
+const API_KEY = process.env.GEMINI_API_KEY || process.env.API_KEY;
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 app.use(express.json());
 
-// -- AI LOGIC (MIGRATED FROM api/brief.ts) --
+// -- SYSTEM PROMPTS --
 const BRIEF_SYSTEM_INSTRUCTION = `
 # ROLE: Judgment Demonstration System (v1)
 # GOAL: Deliver disciplined judgment under uncertainty. "WOW" operator-level execs.
@@ -75,17 +78,19 @@ You must output valid JSON matching this structure exactly:
 }
 `;
 
+// -- API ROUTES --
+
+// 1. EXECUTIVE BRIEF
 app.post('/api/brief', async (req, res) => {
     try {
         const { companyName, companyUrl } = req.body;
-        const apiKey = process.env.GEMINI_API_KEY;
 
-        if (!apiKey) {
-            console.error("Missing GEMINI_API_KEY");
-            return res.status(500).json({ error: "Server Configuration Error" });
+        if (!API_KEY) {
+            console.error("Missing API Key");
+            return res.status(500).json({ error: "Server Configuration Error: Missing API Key" });
         }
 
-        const ai = new GoogleGenAI({ apiKey });
+        const ai = new GoogleGenAI({ apiKey: API_KEY });
         const prompt = `
           Analyze the following target for an EXECUTIVE BRIEF.
           Target Name: ${companyName}
@@ -96,29 +101,18 @@ app.post('/api/brief', async (req, res) => {
           
           CRITICAL INSTRUCTIONS:
           1. Apply the Judgment Demonstration System v1 rules. Be ruthless.
-          2. YOU MUST RETURN VALID JSON WITH ALL FIELDS FILLED. NO EXPECTATIONS.
-          3. REQUIRED FIELDS:
-             - frame.sentence
-             - frame.what_changed (CANNOT BE EMPTY)
-             - frame.why_it_matters
-             - scenarios.most_likely (CANNOT BE EMPTY)
-             - scenarios.second_most_dangerous (CANNOT BE EMPTY)
-             - strategy.recommended_move
-             - strategy.alternative_move
-             - strategy.flip_condition
-             - strategy.watchlist
-             - dossier.key_signals
-             - confidence.band
-          4. "Operational Directive" must be bold, specific, and actionable.
-          5. DO NOT return generic placeholders like "Analyzing..." or "Data acquisition...".
+          2. YOU MUST RETURN VALID JSON WITH ALL FIELDS FILLED.
+          3. "Operational Directive" must be bold, specific, and actionable.
+          4. DO NOT return generic placeholders like "Analyzing..." or "Data acquisition...".
           
           Include specific signals in the dossier bucket based on the SEARCH RESULTS.
         `;
 
-        console.log(`[Brief] Using Model: gemini-3-flash-preview`);
+        console.log(`[Brief] Analyzing: ${companyName}...`);
+
+        // Using 'gemini-3-pro-preview' for high-fidelity reasoning
         const response = await ai.models.generateContent({
-            // GEMINI 3 FLASH (PREVIEW)
-            model: 'gemini-3-flash-preview',
+            model: 'gemini-3-pro-preview',
             contents: prompt,
             config: {
                 tools: [{ googleSearch: {} }],
@@ -133,6 +127,7 @@ app.post('/api/brief', async (req, res) => {
                                 type: { type: Type.STRING },
                                 context_label: { type: Type.STRING },
                             },
+                            required: ["type", "context_label"]
                         },
                         frame: {
                             type: Type.OBJECT,
@@ -141,6 +136,7 @@ app.post('/api/brief', async (req, res) => {
                                 what_changed: { type: Type.STRING },
                                 why_it_matters: { type: Type.STRING },
                             },
+                            required: ["sentence", "what_changed", "why_it_matters"]
                         },
                         scenarios: {
                             type: Type.OBJECT,
@@ -148,6 +144,7 @@ app.post('/api/brief', async (req, res) => {
                                 most_likely: { type: Type.STRING },
                                 second_most_dangerous: { type: Type.STRING },
                             },
+                            required: ["most_likely", "second_most_dangerous"]
                         },
                         strategy: {
                             type: Type.OBJECT,
@@ -160,6 +157,7 @@ app.post('/api/brief', async (req, res) => {
                                     items: { type: Type.STRING }
                                 },
                             },
+                            required: ["recommended_move", "alternative_move", "flip_condition", "watchlist"]
                         },
                         dossier: {
                             type: Type.OBJECT,
@@ -172,9 +170,11 @@ app.post('/api/brief', async (req, res) => {
                                             bucket: { type: Type.STRING },
                                             content: { type: Type.STRING }
                                         },
+                                        required: ["bucket", "content"]
                                     }
                                 }
                             },
+                            required: ["key_signals"]
                         },
                         confidence: {
                             type: Type.OBJECT,
@@ -185,6 +185,7 @@ app.post('/api/brief', async (req, res) => {
                                     items: { type: Type.STRING }
                                 },
                             },
+                            required: ["band", "resolving_signals"]
                         },
                     },
                 },
@@ -192,26 +193,24 @@ app.post('/api/brief', async (req, res) => {
         });
 
         const text = response.text;
-        console.log("[Brief] Raw Response:", text);
+        console.log("[Brief] Response generated.");
         res.setHeader('Content-Type', 'application/json');
         res.send(text);
 
     } catch (e) {
         console.error("Brief API Error:", e);
-        // RETURN ACTUAL ERROR TO CLIENT
         res.status(500).json({ error: e.message || "Server Error" });
     }
 });
 
-// -- DEEP DOSSIER LOGIC (MIGRATED FROM api/dossier.ts) --
+// 2. DEEP DOSSIER
 app.post('/api/dossier', async (req, res) => {
     try {
         const { companyName } = req.body;
-        const apiKey = process.env.GEMINI_API_KEY;
 
-        if (!apiKey) return res.status(500).json({ error: "Configuration Error" });
+        if (!API_KEY) return res.status(500).json({ error: "Configuration Error" });
 
-        const ai = new GoogleGenAI({ apiKey });
+        const ai = new GoogleGenAI({ apiKey: API_KEY });
         const prompt = `
           GENERATE A DEEP-DIVE STRATEGIC AUDIT FOR: ${companyName}
           
@@ -232,13 +231,15 @@ app.post('/api/dossier', async (req, res) => {
           5. THE "ALPHA": One unique insight that the market is missing.
         `;
 
+        console.log(`[Dossier] Analyzing: ${companyName}...`);
+
+        // Using 'gemini-3-pro-preview' + Thinking for maximum depth
         const response = await ai.models.generateContent({
-            // GEMINI 3 PRO (PREVIEW)
             model: 'gemini-3-pro-preview',
             contents: prompt,
             config: {
                 tools: [{ googleSearch: {} }],
-                // thinkingConfig removed to prevent 500 errors
+                thinkingConfig: { thinkingBudget: 1024 }, // Enabled for depth
                 responseMimeType: 'application/json',
                 responseSchema: {
                     type: Type.OBJECT,
@@ -286,9 +287,8 @@ app.post('/api/dossier', async (req, res) => {
             .map(c => c.web?.uri)
             .filter(uri => uri && uri.startsWith('http'));
 
-        // Fallback: Check if the model put sources in the JSON itself
+        // Merge sources
         const jsonSources = data.sources || [];
-
         const mergedSources = [...new Set([...webSources, ...jsonSources])].slice(0, 8);
 
         const mergedData = {
@@ -296,36 +296,23 @@ app.post('/api/dossier', async (req, res) => {
             sources: mergedSources
         };
 
+        console.log("[Dossier] Response generated.");
         res.json(mergedData);
 
     } catch (e) {
         console.error("Dossier API Error:", e);
-        // RETURN ACTUAL ERROR TO CLIENT
         res.status(500).json({ error: e.message || "Server Error" });
     }
 });
 
 // -- SERVE FRONTEND --
-// Serve static files from the 'dist' directory
 app.use(express.static(path.join(__dirname, 'dist')));
 
-// Handle React routing, return index.html for all other routes
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
-// Bind to 0.0.0.0 for Docker/Cloud Run
+// -- START SERVER --
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}`);
-});
-
-// Global Error Handlers
-process.on('uncaughtException', (err) => {
-    console.error('Uncaught Exception:', err);
-    process.exit(1);
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-    process.exit(1);
 });
