@@ -206,16 +206,17 @@ app.post('/api/dossier', async (req, res) => {
         const prompt = `
           GENERATE A DEEP-DIVE STRATEGIC AUDIT FOR: ${companyName}
           
-          You are a Senior Private Equity Analyst. 
-          Conduct a "Red Team" analysis.
+          ROLE: Senior Private Equity Analyst (Red Team).
+          GOAL: Find the "Kill Shot" - the existential threat or the hidden edge.
           
-          REQUIREMENTS:
-          1. USE GOOGLE SEARCH to find hard numbers (Revenue, CAGR, Burn Rate, Market Cap, Headcount changes).
-          2. Quote specific recent events (last 3 months) as evidence.
-          3. Do not be generic. Be specific, numerical, and critical.
+          CRITICAL RESEARCH RULES:
+          1.  USE GOOGLE SEARCH. Do not hallucinate.
+          2.  FIND HARD DATA: Revenue, Burn Rate, churn, lawsuits, executive departures.
+          3.  NO GENERIC FLUFF. "Strong brand" is banned. Say "NPS of 72" or "35% unaided awareness".
+          4.  CITATIONS ARE MANDATORY. Every claim must have a source.
           
           Structure the report into these exact sections:
-          1. EXECUTIVE SUMMARY: The bottom line judgment.
+          1. EXECUTIVE SUMMARY: The bottom line judgment. (BLUF)
           2. MARKET FRICTION: Why is their growth hard? What are the structural headwinds?
           3. COMPETITIVE LETHALITY: Who is actually killing them and how? (Not just a list of names).
           4. OPERATIONAL REALITY: Financial health, leadership turmoil, or product velocity checks.
@@ -227,7 +228,6 @@ app.post('/api/dossier', async (req, res) => {
             contents: prompt,
             config: {
                 tools: [{ googleSearch: {} }],
-                // thinkingConfig removed to prevent 500 errors
                 responseMimeType: 'application/json',
                 responseSchema: {
                     type: Type.OBJECT,
@@ -269,15 +269,21 @@ app.post('/api/dossier', async (req, res) => {
         const text = response.text;
         const data = JSON.parse(text || "{}");
 
-        // Extract sources
+        // Extract sources from Grounding Metadata
+        // Flash 2.0 often returns groundingMetadata in a slightly different structure
         const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
         const webSources = groundingChunks
             .map(c => c.web?.uri)
-            .filter(uri => !!uri);
+            .filter(uri => uri && uri.startsWith('http'));
+
+        // Fallback: Check if the model put sources in the JSON itself (it often does)
+        const jsonSources = data.sources || [];
+
+        const mergedSources = [...new Set([...webSources, ...jsonSources])].slice(0, 8);
 
         const mergedData = {
             sections: data.sections || [],
-            sources: [...new Set([...webSources, ...(data.sources || [])])].slice(0, 8)
+            sources: mergedSources
         };
 
         res.json(mergedData);
