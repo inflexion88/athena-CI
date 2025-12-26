@@ -98,7 +98,7 @@ app.post('/api/brief', async (req, res) => {
         `;
 
         const response = await ai.models.generateContent({
-            model: 'gemini-2.0-flash-exp',
+            model: 'gemini-2.0-flash-exp', // Fast, initial screen
             contents: prompt,
             config: {
                 tools: [{ googleSearch: {} }],
