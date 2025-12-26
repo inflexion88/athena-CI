@@ -104,7 +104,8 @@ app.post('/api/brief', async (req, res) => {
         `;
 
         const response = await ai.models.generateContent({
-            model: 'gemini-2.0-flash-exp', // Fast, initial screen
+            // USER INTENT: "Gemini 3.0 Flash Thinking"
+            model: 'gemini-2.0-flash-thinking-exp-01-21',
             contents: prompt,
             config: {
                 tools: [{ googleSearch: {} }],
@@ -224,11 +225,12 @@ app.post('/api/dossier', async (req, res) => {
         `;
 
         const response = await ai.models.generateContent({
-            // SWITCHING TO THINKING MODEL FOR DEEP RESEARCH
-            model: 'gemini-2.0-flash-thinking-exp-01-21',
+            // SWITCHING TO THINKING MODEL FOR DEEP RESEARCH (User Intent: "Gemini 3.0 Flash Thinking")
+            model: 'gemini-1.5-pro-latest',
             contents: prompt,
             config: {
                 tools: [{ googleSearch: {} }],
+                // thinkingConfig removed to prevent 500 errors
                 responseMimeType: 'application/json',
                 responseSchema: {
                     type: Type.OBJECT,
