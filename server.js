@@ -96,9 +96,21 @@ app.post('/api/brief', async (req, res) => {
           
           CRITICAL INSTRUCTIONS:
           1. Apply the Judgment Demonstration System v1 rules. Be ruthless.
-          2. YOU MUST POPULATE 'frame.sentence', 'scenarios.most_likely', and 'scenarios.second_most_dangerous'.
-          3. DO NOT return generic placeholders like "Analyzing...".
+          2. YOU MUST RETURN VALID JSON WITH ALL FIELDS FILLED. NO EXPECTATIONS.
+          3. REQUIRED FIELDS:
+             - frame.sentence
+             - frame.what_changed (CANNOT BE EMPTY)
+             - frame.why_it_matters
+             - scenarios.most_likely (CANNOT BE EMPTY)
+             - scenarios.second_most_dangerous (CANNOT BE EMPTY)
+             - strategy.recommended_move
+             - strategy.alternative_move
+             - strategy.flip_condition
+             - strategy.watchlist
+             - dossier.key_signals
+             - confidence.band
           4. "Operational Directive" must be bold, specific, and actionable.
+          5. DO NOT return generic placeholders like "Analyzing..." or "Data acquisition...".
           
           Include specific signals in the dossier bucket based on the SEARCH RESULTS.
         `;
@@ -121,7 +133,6 @@ app.post('/api/brief', async (req, res) => {
                                 type: { type: Type.STRING },
                                 context_label: { type: Type.STRING },
                             },
-                            required: ["type", "context_label"]
                         },
                         frame: {
                             type: Type.OBJECT,
@@ -130,7 +141,6 @@ app.post('/api/brief', async (req, res) => {
                                 what_changed: { type: Type.STRING },
                                 why_it_matters: { type: Type.STRING },
                             },
-                            required: ["sentence", "what_changed", "why_it_matters"]
                         },
                         scenarios: {
                             type: Type.OBJECT,
@@ -138,7 +148,6 @@ app.post('/api/brief', async (req, res) => {
                                 most_likely: { type: Type.STRING },
                                 second_most_dangerous: { type: Type.STRING },
                             },
-                            required: ["most_likely", "second_most_dangerous"]
                         },
                         strategy: {
                             type: Type.OBJECT,
@@ -151,7 +160,6 @@ app.post('/api/brief', async (req, res) => {
                                     items: { type: Type.STRING }
                                 },
                             },
-                            required: ["recommended_move", "alternative_move", "flip_condition", "watchlist"]
                         },
                         dossier: {
                             type: Type.OBJECT,
@@ -164,11 +172,9 @@ app.post('/api/brief', async (req, res) => {
                                             bucket: { type: Type.STRING },
                                             content: { type: Type.STRING }
                                         },
-                                        required: ["bucket", "content"]
                                     }
                                 }
                             },
-                            required: ["key_signals"]
                         },
                         confidence: {
                             type: Type.OBJECT,
@@ -179,7 +185,6 @@ app.post('/api/brief', async (req, res) => {
                                     items: { type: Type.STRING }
                                 },
                             },
-                            required: ["band", "resolving_signals"]
                         },
                     },
                 },
