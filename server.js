@@ -3,7 +3,7 @@ import express from 'express';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import { GoogleGenAI, Type } from "@google/genai";
-import dotenv from 'dotenv'; // Fallback for local dev if not using docker env vars yet
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -182,7 +182,7 @@ app.post('/api/brief', async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
         res.send(text);
 
-    } catch (e: any) {
+    } catch (e) {
         console.error("Brief API Error:", e);
         res.status(500).json({ error: e.message });
     }
@@ -266,8 +266,8 @@ app.post('/api/dossier', async (req, res) => {
         // Extract sources
         const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
         const webSources = groundingChunks
-            .map((c: any) => c.web?.uri)
-            .filter((uri: any) => !!uri);
+            .map(c => c.web?.uri)
+            .filter(uri => !!uri);
 
         const mergedData = {
             sections: data.sections || [],
@@ -276,7 +276,7 @@ app.post('/api/dossier', async (req, res) => {
 
         res.json(mergedData);
 
-    } catch (e: any) {
+    } catch (e) {
         console.error("Dossier API Error:", e);
         res.status(500).json({ error: e.message });
     }
@@ -291,6 +291,18 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
-app.listen(PORT, () => {
+// Bind to 0.0.0.0 for Docker/Cloud Run
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}`);
+});
+
+// Global Error Handlers to prevent startup crashes from being silent
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
+    process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    process.exit(1);
 });
