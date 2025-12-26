@@ -217,11 +217,11 @@ app.post('/api/dossier', async (req, res) => {
         `;
 
         const response = await ai.models.generateContent({
-            model: 'gemini-2.0-flash-thinking-exp-1219',
+            model: 'gemini-2.0-flash-exp',
             contents: prompt,
             config: {
                 tools: [{ googleSearch: {} }],
-                thinkingConfig: { thinkingBudget: 1024 },
+                // thinkingConfig removed to prevent 500 errors
                 responseMimeType: 'application/json',
                 responseSchema: {
                     type: Type.OBJECT,
