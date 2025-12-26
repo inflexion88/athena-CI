@@ -103,6 +103,7 @@ app.post('/api/brief', async (req, res) => {
           Include specific signals in the dossier bucket based on the SEARCH RESULTS.
         `;
 
+        console.log(`[Brief] Using Model: gemini-3-flash-preview`);
         const response = await ai.models.generateContent({
             // GEMINI 3 FLASH (PREVIEW)
             model: 'gemini-3-flash-preview',
@@ -186,6 +187,7 @@ app.post('/api/brief', async (req, res) => {
         });
 
         const text = response.text;
+        console.log("[Brief] Raw Response:", text);
         res.setHeader('Content-Type', 'application/json');
         res.send(text);
 
