@@ -211,7 +211,7 @@ const App: React.FC = () => {
       </div>
 
       {/* Status Indicators (Corner) */}
-      <div className="absolute top-6 left-6 z-40 flex flex-col space-y-2 pointer-events-none">
+      <div className="absolute top-6 left-6 z-40 flex flex-col space-y-2 pointer-events-none print:hidden">
         <div className="flex items-center space-x-2">
           <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500 shadow-[0_0_10px_#00ff00]' : 'bg-red-500'}`}></div>
           <span className="text-[10px] text-gray-400 tracking-widest uppercase">
