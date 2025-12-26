@@ -46,6 +46,7 @@ export const generateExecutiveBrief = async (companyName: string, companyUrl?: s
     }
 
     const rawData = await response.json();
+    console.log("RAW BRIEF DATA:", rawData); // DEBUG: See what the model actually returned
     return sanitizeBrief(rawData, companyName);
 
   } catch (err) {

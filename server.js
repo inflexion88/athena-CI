@@ -93,7 +93,13 @@ app.post('/api/brief', async (req, res) => {
           
           If the URL is missing, infer the most likely major company with this name.
           USE GOOGLE SEARCH to find the latest pricing, recent news, and strategic shifts.
-          Apply the Judgment Demonstration System v1 rules. Be ruthless.
+          
+          CRITICAL INSTRUCTIONS:
+          1. Apply the Judgment Demonstration System v1 rules. Be ruthless.
+          2. YOU MUST POPULATE 'frame.sentence', 'scenarios.most_likely', and 'scenarios.second_most_dangerous'.
+          3. DO NOT return generic placeholders like "Analyzing...".
+          4. "Operational Directive" must be bold, specific, and actionable.
+          
           Include specific signals in the dossier bucket based on the SEARCH RESULTS.
         `;
 
