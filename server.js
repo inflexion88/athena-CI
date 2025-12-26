@@ -104,8 +104,8 @@ app.post('/api/brief', async (req, res) => {
         `;
 
         const response = await ai.models.generateContent({
-            // USER INTENT: "Gemini 3.0 Flash Thinking"
-            model: 'gemini-2.0-flash-thinking-exp-01-21',
+            // GEMINI 3 FLASH (PREVIEW)
+            model: 'gemini-3-flash-preview',
             contents: prompt,
             config: {
                 tools: [{ googleSearch: {} }],
@@ -191,7 +191,8 @@ app.post('/api/brief', async (req, res) => {
 
     } catch (e) {
         console.error("Brief API Error:", e);
-        res.status(500).json({ error: e.message });
+        // RETURN ACTUAL ERROR TO CLIENT
+        res.status(500).json({ error: e.message || "Server Error" });
     }
 });
 
@@ -225,8 +226,8 @@ app.post('/api/dossier', async (req, res) => {
         `;
 
         const response = await ai.models.generateContent({
-            // SWITCHING TO THINKING MODEL FOR DEEP RESEARCH (User Intent: "Gemini 3.0 Flash Thinking")
-            model: 'gemini-1.5-pro-latest',
+            // GEMINI 3 PRO (PREVIEW)
+            model: 'gemini-3-pro-preview',
             contents: prompt,
             config: {
                 tools: [{ googleSearch: {} }],
@@ -273,13 +274,12 @@ app.post('/api/dossier', async (req, res) => {
         const data = JSON.parse(text || "{}");
 
         // Extract sources from Grounding Metadata
-        // Flash 2.0 often returns groundingMetadata in a slightly different structure
         const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
         const webSources = groundingChunks
             .map(c => c.web?.uri)
             .filter(uri => uri && uri.startsWith('http'));
 
-        // Fallback: Check if the model put sources in the JSON itself (it often does)
+        // Fallback: Check if the model put sources in the JSON itself
         const jsonSources = data.sources || [];
 
         const mergedSources = [...new Set([...webSources, ...jsonSources])].slice(0, 8);
@@ -293,7 +293,8 @@ app.post('/api/dossier', async (req, res) => {
 
     } catch (e) {
         console.error("Dossier API Error:", e);
-        res.status(500).json({ error: e.message });
+        // RETURN ACTUAL ERROR TO CLIENT
+        res.status(500).json({ error: e.message || "Server Error" });
     }
 });
 
@@ -311,7 +312,7 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-// Global Error Handlers to prevent startup crashes from being silent
+// Global Error Handlers
 process.on('uncaughtException', (err) => {
     console.error('Uncaught Exception:', err);
     process.exit(1);
