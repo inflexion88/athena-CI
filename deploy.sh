@@ -25,8 +25,8 @@ fi
 echo "Deploying $APP_NAME to Google Cloud Run..."
 
 # Enable necessary services (just in case)
-echo "Enabling Cloud Build and Cloud Run APIs..."
-gcloud services enable cloudbuild.googleapis.com run.googleapis.com
+echo "Enabling Cloud Build, Cloud Run, and Container Registry APIs..."
+gcloud services enable cloudbuild.googleapis.com run.googleapis.com containerregistry.googleapis.com
 
 # Build and Submit the container to Cloud Build
 gcloud builds submit --tag gcr.io/$PROJECT_ID/$APP_NAME
