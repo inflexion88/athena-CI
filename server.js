@@ -224,7 +224,8 @@ app.post('/api/dossier', async (req, res) => {
         `;
 
         const response = await ai.models.generateContent({
-            model: 'gemini-2.0-flash-exp',
+            // SWITCHING TO THINKING MODEL FOR DEEP RESEARCH
+            model: 'gemini-2.0-flash-thinking-exp-01-21',
             contents: prompt,
             config: {
                 tools: [{ googleSearch: {} }],
