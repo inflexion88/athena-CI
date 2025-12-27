@@ -42,8 +42,8 @@ const DossierModal: React.FC<DossierModalProps> = ({ report, deepDossier, onClos
 
       // Configuration for "Light Mode" High Fidelity PDF
       const opt = {
-         margin: [10, 10, 10, 10], // Added margins to prevent cutoffs
-         filename: `${report.target_name.replace(/\s+/g, '_')}_CONFIDENTIAL_REPORT.pdf`,
+         margin: [15, 15, 15, 15], // Standard document margins
+         filename: `${report.target_name.replace(/\s+/g, '_')}_STRATEGIC_AUDIT.pdf`,
          image: { type: 'jpeg', quality: 0.98 },
          html2canvas: {
             scale: 2,
@@ -51,10 +51,11 @@ const DossierModal: React.FC<DossierModalProps> = ({ report, deepDossier, onClos
             backgroundColor: '#ffffff',
             logging: false,
             letterRendering: true,
-            scrollY: 0, // Help with scrolling issues
+            scrollY: 0,
+            windowWidth: 1200, // Force desktop render width
          },
          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-         pagebreak: { mode: ['avoid-all', 'css', 'legacy'] } // Prevent awkward page splits
+         pagebreak: { mode: ['css', 'legacy'] } // Rely on specific break classes
       };
 
       try {
@@ -135,7 +136,7 @@ const DossierModal: React.FC<DossierModalProps> = ({ report, deepDossier, onClos
 
                {/* DOCUMENT PAPER SURFACE (THE PART TO BE DOWNLOADED) */}
                {deepDossier?.is_ready && (
-                  <div ref={contentRef} className="max-w-[850px] mx-auto my-8 bg-white text-gray-900 min-h-[1100px] shadow-xl p-12 md:p-16 relative font-serif border border-gray-200">
+                  <div ref={contentRef} className="max-w-[850px] mx-auto my-8 bg-white text-gray-900 min-h-[1100px] p-12 md:p-16 relative font-serif border border-gray-200">
 
                      {/* FORMAL MASTHEAD - LIGHT MODE */}
                      <div className="border-b-4 border-black pb-4 mb-8 flex justify-between items-end">
