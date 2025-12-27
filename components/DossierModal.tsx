@@ -168,7 +168,7 @@ const DossierModal: React.FC<DossierModalProps> = ({ report, deepDossier, onClos
                         <div className="border-y-2 border-black grid grid-cols-3 divide-x-2 divide-gray-200">
                            <div className="p-4">
                               <span className="block font-sans text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-2">Sector Context</span>
-                              <span className="block font-sans font-bold text-sm uppercase text-gray-900">{report.intent.context_label}</span>
+                              <span className="block font-sans font-bold text-sm uppercase text-gray-900 break-words">{report.intent.context_label}</span>
                            </div>
                            <div className="p-4">
                               <span className="block font-sans text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-2">Risk Band</span>
