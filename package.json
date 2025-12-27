@@ -17,6 +17,7 @@
     "html2pdf.js": "^0.10.1",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "react-markdown": "^10.1.0",
     "three": "^0.182.0"
   },
   "devDependencies": {
