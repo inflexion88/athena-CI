@@ -102,8 +102,17 @@ app.post('/api/brief', async (req, res) => {
           CRITICAL INSTRUCTIONS:
           1. Apply the Judgment Demonstration System v1 rules. Be ruthless.
           2. YOU MUST RETURN VALID JSON WITH ALL FIELDS FILLED.
-          3. "Operational Directive" must be bold, specific, and actionable.
-          4. DO NOT return generic placeholders like "Analyzing..." or "Data acquisition...".
+          3. REQUIRED FIELDS:
+             - frame.sentence
+             - frame.what_changed (CRITICAL: Do not skip)
+             - frame.why_it_matters
+             - scenarios.most_likely
+             - scenarios.second_most_dangerous
+             - strategy.recommended_move
+             - strategy.flip_condition
+             - dossier.key_signals
+          4. "Operational Directive" must be bold, specific, and actionable.
+          5. DO NOT return generic placeholders like "Analyzing..." or "Data acquisition...".
           
           Include specific signals in the dossier bucket based on the SEARCH RESULTS.
         `;
