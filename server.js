@@ -80,7 +80,9 @@ app.post('/api/brief', async (req, res) => {
              - strategy.recommended_move
              - strategy.flip_condition
              - dossier.key_signals
-          4. "Operational Directive" MUST be a detailed, 15-20 word command. DO NOT use single words.
+          4. "Operational Directive" MUST be a strategic, 15-20 word executive counter-measure (e.g., "Launch X to block Y").
+             - CRITICAL: DO NOT give investment advice (Buy/Sell/Hold). This is INTELLIGENCE, not financial planning.
+             - BANNED WORDS: "Accumulate", "Short", "Long", "Hedge", "Puts", "Calls", "Stock".
           5. DO NOT return generic placeholders like "Analyzing..." or "Data acquisition...".
           6. "Strategic Frame" should be concise (1-2 powerful sentences) to save UI space.
           
