@@ -168,7 +168,7 @@ const IntelDisplay: React.FC<IntelDisplayProps> = ({ report, deepDossier, scanni
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-end pointer-events-auto border-t border-white/20 pt-8 relative z-10 bg-gradient-to-t from-black via-black/80 to-transparent pb-8">
 
             {/* LEFT PRIMARY BLOCK (Cols 1-7): Frame + Directive */}
-            <div className="md:col-span-7 flex flex-col space-y-12">
+            <div className="md:col-span-7 flex flex-col space-y-6">
 
               <div className="space-y-4">
                 <span className="text-cyan-400 font-mono text-[10px] uppercase tracking-[0.2em] block border-l-2 border-cyan-500 pl-2">Strategic Frame</span>
