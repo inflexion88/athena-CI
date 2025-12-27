@@ -80,8 +80,9 @@ app.post('/api/brief', async (req, res) => {
              - strategy.recommended_move
              - strategy.flip_condition
              - dossier.key_signals
-          4. "Operational Directive" must be bold, specific, and actionable.
+          4. "Operational Directive" MUST be a detailed, 15-20 word command. DO NOT use single words.
           5. DO NOT return generic placeholders like "Analyzing..." or "Data acquisition...".
+          6. "Strategic Frame" should be concise (1-2 powerful sentences) to save UI space.
           
           Include specific signals in the dossier bucket based on the SEARCH RESULTS.
         `;
