@@ -170,22 +170,17 @@ const IntelDisplay: React.FC<IntelDisplayProps> = ({ report, deepDossier, scanni
             {/* LEFT PRIMARY BLOCK (Cols 1-7): Frame + Directive */}
             <div className="md:col-span-7 flex flex-col space-y-12">
 
-              {/* 1. FRAME */}
               <div className="space-y-4">
                 <span className="text-cyan-400 font-mono text-[10px] uppercase tracking-[0.2em] block border-l-2 border-cyan-500 pl-2">Strategic Frame</span>
-                <p className="text-xl md:text-2xl font-light text-white leading-tight">
+                <p className="text-xl md:text-2xl font-light text-white leading-relaxed">
                   {report.frame.sentence}
                 </p>
-                <div className="text-gray-400 text-xs font-mono leading-relaxed pl-3 border-l border-gray-800">
-                  <span className="text-gray-600 uppercase text-[9px] block mb-1">What Changed:</span>
-                  {report.frame.what_changed}
-                </div>
               </div>
 
               {/* 2. DIRECTIVE (Moved from Right, Left Aligned) */}
               <div className="flex flex-col items-start text-left">
                 <span className="text-orange-500 font-mono text-[10px] uppercase tracking-[0.2em] block mb-2">Operational Directive</span>
-                <h2 className="text-lg md:text-xl font-bold text-white mb-4 leading-relaxed max-w-4xl">
+                <h2 className="text-xl md:text-2xl font-bold text-white mb-4 leading-tight max-w-4xl">
                   {report.strategy.recommended_move}
                 </h2>
                 <div className="bg-orange-900/10 border border-orange-500/20 p-4 w-full mb-4">
@@ -227,8 +222,17 @@ const IntelDisplay: React.FC<IntelDisplayProps> = ({ report, deepDossier, scanni
               </div>
             </div>
 
-            {/* RIGHT SECONDARY BLOCK (Cols 8-12): Scenarios (Moved from Middle, Right Aligned) */}
-            <div className="md:col-span-5 flex flex-col space-y-6 items-end text-right">
+            {/* RIGHT SECONDARY BLOCK (Cols 8-12): Context Column (Sidebar style) */}
+            <div className="md:col-span-5 flex flex-col space-y-8 items-end text-right border-l border-white/10 pl-8">
+
+              {/* MOVED: WHAT CHANGED */}
+              <div className="w-full flex flex-col items-end">
+                <span className="text-gray-500 font-mono text-[10px] uppercase tracking-[0.2em] block mb-1">Context Shift</span>
+                <p className="text-xs md:text-sm text-gray-400 italic leading-relaxed">
+                  "{report.frame.what_changed}"
+                </p>
+              </div>
+
               <div className="w-full flex flex-col items-end">
                 <span className="text-gray-500 font-mono text-[10px] uppercase tracking-[0.2em] block mb-1">Projected Path</span>
                 <p className="text-sm text-gray-300 border-r border-gray-700 pr-3 py-1">
