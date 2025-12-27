@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
+import ReactMarkdown from 'react-markdown';
 import { ExecutiveBrief, DeepDossier } from '../types';
 // @ts-ignore
 import html2pdf from 'html2pdf.js';
@@ -39,20 +40,21 @@ const DossierModal: React.FC<DossierModalProps> = ({ report, deepDossier, onClos
 
       const element = contentRef.current;
 
-      // Configuration for "Dark Mode" High Fidelity PDF
-      // We use a high scale to ensure text remains crisp despite being rasterized by html2canvas
+      // Configuration for "Light Mode" High Fidelity PDF
       const opt = {
-         margin: 0,
+         margin: [10, 10, 10, 10], // Added margins to prevent cutoffs
          filename: `${report.target_name.replace(/\s+/g, '_')}_CONFIDENTIAL_REPORT.pdf`,
          image: { type: 'jpeg', quality: 0.98 },
          html2canvas: {
             scale: 2,
             useCORS: true,
-            backgroundColor: '#111111',
+            backgroundColor: '#ffffff',
             logging: false,
-            letterRendering: true
+            letterRendering: true,
+            scrollY: 0, // Help with scrolling issues
          },
-         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+         pagebreak: { mode: ['avoid-all', 'css', 'legacy'] } // Prevent awkward page splits
       };
 
       try {
@@ -152,7 +154,8 @@ const DossierModal: React.FC<DossierModalProps> = ({ report, deepDossier, onClos
                      {/* DOCUMENT HEADER */}
                      <div className="mb-12">
                         <div className="mb-8">
-                           <h1 className="font-sans text-5xl md:text-6xl font-black uppercase tracking-tighter leading-[0.9] mb-4 text-black">
+                           {/* RELAXED LEADING FOR PDF SAFETY */}
+                           <h1 className="font-sans text-5xl md:text-6xl font-black uppercase tracking-tighter leading-tight mb-4 text-black">
                               {report.target_name}
                            </h1>
                            <p className="font-serif text-xl italic text-gray-600 border-l-4 border-black pl-4">
@@ -185,31 +188,53 @@ const DossierModal: React.FC<DossierModalProps> = ({ report, deepDossier, onClos
                      <div className="space-y-12">
 
                         {/* 1. EXECUTIVE SUMMARY */}
-                        <section>
+                        <section className="html2pdf__page-break">
                            <h2 className="font-sans text-xs font-black text-black uppercase tracking-[0.2em] mb-6 border-b border-gray-200 pb-2 flex items-center gap-2">
-                              <span className="bg-black text-white px-1">01</span> Executive Judgment
+                              {/* SIMPLIFIED HEADER FOR PDF SAFETY */}
+                              <span className="text-black font-bold mr-2">01</span> Executive Judgment
                            </h2>
                            <div className="text-lg md:text-xl font-serif leading-relaxed text-gray-800 font-medium text-justify">
+                              {/* MARKDOWN RENDERER */}
                               {deepDossier.sections.find(s => s.title.includes("SUMMARY"))?.content.map((p, i) => (
-                                 <p key={i} className="mb-6">
-                                    {p}
-                                 </p>
+                                 <div key={i} className="mb-6">
+                                    <ReactMarkdown
+                                       components={{
+                                          strong: ({ node, ...props }) => <span className="font-bold text-black" {...props} />,
+                                          em: ({ node, ...props }) => <span className="italic text-gray-700" {...props} />,
+                                       }}
+                                    >
+                                       {p}
+                                    </ReactMarkdown>
+                                 </div>
                               ))}
                            </div>
                         </section>
 
                         {/* 2. DYNAMIC SECTIONS */}
                         {deepDossier.sections.filter(s => !s.title.includes("SUMMARY")).map((section, idx) => (
-                           <section key={idx}>
+                           <section key={idx} className="html2pdf__page-break">
                               <h2 className="font-sans text-xs font-black text-black uppercase tracking-[0.2em] mb-6 border-b border-gray-200 pb-2 flex items-center gap-2">
-                                 <span className="bg-gray-200 text-black px-1">0{idx + 2}</span> {section.title}
+                                 <span className="text-gray-500 font-bold mr-2">0{idx + 2}</span> {section.title}
                               </h2>
 
                               <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
 
                                  {/* TEXT CONTENT (8 Cols) */}
                                  <div className="md:col-span-8 font-serif text-sm leading-7 text-gray-700 text-justify">
-                                    {section.content.map((p, i) => <p key={i} className="mb-4">{p}</p>)}
+                                    {section.content.map((p, i) => (
+                                       <div key={i} className="mb-4">
+                                          <ReactMarkdown
+                                             components={{
+                                                strong: ({ node, ...props }) => <span className="font-bold text-gray-900" {...props} />,
+                                                ul: ({ node, ...props }) => <ul className="list-disc pl-5 mb-4 space-y-1" {...props} />,
+                                                li: ({ node, ...props }) => <li className="pl-1" {...props} />,
+                                                p: ({ node, ...props }) => <p className="mb-2" {...props} />,
+                                             }}
+                                          >
+                                             {p}
+                                          </ReactMarkdown>
+                                       </div>
+                                    ))}
                                  </div>
 
                                  {/* METRICS SIDEBAR (4 Cols) */}
@@ -235,7 +260,7 @@ const DossierModal: React.FC<DossierModalProps> = ({ report, deepDossier, onClos
                         ))}
 
                         {/* SOURCES FOOTER */}
-                        <div className="pt-12 mt-12 border-t border-gray-200">
+                        <div className="pt-12 mt-12 border-t border-gray-200 html2pdf__page-break">
                            <h4 className="font-sans text-[9px] font-bold uppercase mb-6 text-gray-500 tracking-widest">Reference Links</h4>
                            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-8">
                               {deepDossier.sources.map((source, i) => (
