@@ -136,7 +136,7 @@ app.post('/api/brief', async (req, res) => {
                                 what_changed: { type: Type.STRING },
                                 why_it_matters: { type: Type.STRING },
                             },
-                            required: ["sentence", "what_changed", "why_it_matters"]
+                            // Relaxed verification for Frame to prevent total drop
                         },
                         scenarios: {
                             type: Type.OBJECT,
