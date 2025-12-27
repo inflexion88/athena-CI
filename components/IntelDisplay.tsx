@@ -132,8 +132,8 @@ const IntelDisplay: React.FC<IntelDisplayProps> = ({ report, deepDossier, scanni
         transition={{ duration: 0.8, ease: "easeOut" }}
         className="absolute inset-0 z-20 pointer-events-none flex justify-center print:hidden"
       >
-        {/* COMPACTED VIEWPORT CONTAINER - WIDENED to 1400px, REDUCED PADDING to p-10 */}
-        <div className="w-full max-w-[1400px] h-full relative flex flex-col justify-end p-5 md:p-10">
+        {/* COMPACTED VIEWPORT CONTAINER - WIDENED to 1600px, REDUCED PADDING to p-10 */}
+        <div className="w-full max-w-[1600px] h-full relative flex flex-col justify-end p-5 md:p-10">
 
           {/* BACKGROUND GRID LINES (Subtle) */}
           <div className="absolute inset-0 z-0 opacity-10 pointer-events-none border-x border-white/10 mx-5 md:mx-10">
@@ -155,7 +155,7 @@ const IntelDisplay: React.FC<IntelDisplayProps> = ({ report, deepDossier, scanni
 
             <div className="flex flex-col items-end">
               <div className={`px-4 py-1 mb-2 font-mono text-xs font-bold tracking-widest uppercase ${report.confidence.band === 'HIGH' ? 'bg-green-500 text-black' :
-                  report.confidence.band === 'MEDIUM' ? 'bg-yellow-500 text-black' : 'bg-red-500 text-white'
+                report.confidence.band === 'MEDIUM' ? 'bg-yellow-500 text-black' : 'bg-red-500 text-white'
                 }`}>
                 {report.confidence.band} CONFIDENCE
               </div>
@@ -185,7 +185,7 @@ const IntelDisplay: React.FC<IntelDisplayProps> = ({ report, deepDossier, scanni
               {/* 2. DIRECTIVE (Moved from Right, Left Aligned) */}
               <div className="flex flex-col items-start text-left">
                 <span className="text-orange-500 font-mono text-[10px] uppercase tracking-[0.2em] block mb-2">Operational Directive</span>
-                <h2 className="text-xl md:text-2xl font-bold text-white mb-4 leading-tight">
+                <h2 className="text-lg md:text-xl font-bold text-white mb-4 leading-relaxed max-w-4xl">
                   {report.strategy.recommended_move}
                 </h2>
                 <div className="bg-orange-900/10 border border-orange-500/20 p-4 w-full mb-4">
@@ -196,8 +196,8 @@ const IntelDisplay: React.FC<IntelDisplayProps> = ({ report, deepDossier, scanni
                 <button
                   onClick={() => setShowDossier(true)}
                   className={`group flex items-center gap-3 px-6 py-3 font-mono text-xs font-bold uppercase tracking-widest transition-all relative overflow-hidden ${deepDossier?.is_ready
-                      ? "bg-white text-black hover:bg-cyan-400"
-                      : "bg-gray-900 text-gray-400 border border-white/10"
+                    ? "bg-white text-black hover:bg-cyan-400"
+                    : "bg-gray-900 text-gray-400 border border-white/10"
                     }`}
                 >
                   {/* LOADING STATE BACKGROUND */}
