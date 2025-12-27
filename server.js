@@ -44,38 +44,7 @@ HARD RULES:
 5. CROSS_DOMAIN_PATTERNS (Historical structures, analogies)
 
 # OUTPUT SCHEMA (JSON Only):
-You must output valid JSON matching this structure exactly:
-{
-  "intent": {
-    "type": "SITUATIONAL | DECISION_DRIVEN | RISK_FOCUSED",
-    "context_label": "POSITIONING | TIMING | CAPITAL | RISK | NARRATIVE_TRUST"
-  },
-  "frame": {
-    "sentence": "Restate what this really is (e.g., 'This is a capital efficiency squeeze, not a product war').",
-    "what_changed": "1-2 sentences on the shift.",
-    "why_it_matters": "1-2 sentences on impact."
-  },
-  "scenarios": {
-    "most_likely": "The baseline path (mechanism, not story).",
-    "second_most_dangerous": "The risk case that could blindside us."
-  },
-  "strategy": {
-    "recommended_move": "Single decisive action.",
-    "alternative_move": "Backup action.",
-    "flip_condition": "One observable condition that invalidates the recommendation.",
-    "watchlist": ["Signal 1", "Signal 2", "Signal 3"]
-  },
-  "dossier": {
-    "key_signals": [
-      { "bucket": "STRUCTURAL_FRAGILITY", "content": "Specific evidence point..." },
-      { "bucket": "INCENTIVES_POWER", "content": "Specific evidence point..." }
-    ]
-  },
-  "confidence": {
-    "band": "LOW | MEDIUM | HIGH",
-    "resolving_signals": ["What evidence would raise confidence?"]
-  }
-}
+(REMOVED: Relying on Native API Schema for strict enforcement)
 `;
 
 // -- API ROUTES --
