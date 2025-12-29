@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Conversation } from '@11labs/client';
+import { Conversation } from '@elevenlabs/client';
 import BlackHole from './components/BlackHole';
 import IntelDisplay from './components/IntelDisplay';
 import { generateExecutiveBrief, generateDeepDossier } from './geminiService';
@@ -51,23 +51,23 @@ const App: React.FC = () => {
 
       // Return script for agent
       return `
-        FRAME: ${brief.frame.sentence}
+        Here is the strategic frame: ${brief.frame.sentence}
         
-        SITUATION: ${brief.frame.what_changed} ${brief.frame.why_it_matters}
+        Situation Report: ${brief.frame.what_changed} This is critical because ${brief.frame.why_it_matters}
         
-        SCENARIOS:
-        Base Case: ${brief.scenarios.most_likely}
-        Risk Case: ${brief.scenarios.second_most_dangerous}
+        Scenario Analysis. 
+        The Base Case is ${brief.scenarios.most_likely}
+        The Risk Case is ${brief.scenarios.second_most_dangerous}
         
-        DIRECTIVE:
-        Recommended Move: ${brief.strategy.recommended_move}
-        Backup Move: ${brief.strategy.alternative_move}
+        My Directive is as follows:
+        I recommend you ${brief.strategy.recommended_move}
+        Alternatively, you could ${brief.strategy.alternative_move}
         
-        WATCHLIST: ${brief.strategy.watchlist.slice(0, 2).join(", ")}.
-        FLIP CONDITION: I will pivot if ${brief.strategy.flip_condition}.
+        Priority Watchlist items are: ${brief.strategy.watchlist.slice(0, 2).join(", ")}.
+        I will pivot my assessment if ${brief.strategy.flip_condition}.
         
-        CONFIDENCE: ${brief.confidence.band}. 
-        ${brief.confidence.band !== 'HIGH' ? `Resolving signals needed: ${brief.confidence.resolving_signals.join(", ")}` : ''}
+        My confidence level is ${brief.confidence.band}. 
+        ${brief.confidence.band !== 'HIGH' ? `I need to resolve the following signals: ${brief.confidence.resolving_signals.join(", ")}` : ''}
       `;
     } catch (e: any) {
       console.error("Scan failed", e);
