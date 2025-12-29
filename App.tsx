@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Conversation } from '@11labs/client';
 import BlackHole from './components/BlackHole';
 import IntelDisplay from './components/IntelDisplay';
@@ -177,37 +178,59 @@ const App: React.FC = () => {
 
       {/* 3. Control Layer */}
       <div className="absolute inset-0 z-30 pointer-events-none flex flex-col items-center justify-center">
-        {!isConnected ? (
-          <div
-            onClick={startConversation}
-            className="pointer-events-auto cursor-pointer group flex flex-col items-center justify-center z-50"
-          >
-            {/* White Glow Orb/Button */}
-            <div className="w-16 h-16 rounded-full bg-white shadow-[0_0_50px_rgba(255,255,255,0.8)] mb-6 animate-pulse group-hover:scale-110 transition-transform duration-500"></div>
-
-            <span className="text-black font-bold text-lg tracking-widest bg-white/90 px-6 py-2 shadow-[0_0_30px_rgba(255,255,255,0.6)] transition-all group-hover:bg-white group-hover:shadow-[0_0_50px_rgba(255,255,255,0.9)]">
-              CLICK HERE TO BEGIN
-            </span>
-            <span className="mt-2 text-xs text-gray-500 tracking-[0.4em] uppercase opacity-70">
-              Initialize Intelligence
-            </span>
-
-            {mountError && (
-              <div className="mt-4 text-red-500 bg-red-900/20 px-4 py-2 text-xs border border-red-900/50">
-                {mountError}
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="absolute bottom-10 pointer-events-auto">
-            <button
-              onClick={endConversation}
-              className="text-red-500 text-xs tracking-[0.2em] border border-red-900/50 px-4 py-2 hover:bg-red-900/20 transition-colors bg-black/50 backdrop-blur"
+        <AnimatePresence mode="wait">
+          {!isConnected ? (
+            <motion.div
+              key="intro"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, transition: { duration: 0.5 } }}
+              onClick={startConversation}
+              className="pointer-events-auto cursor-pointer group flex flex-col items-center justify-center z-50 relative"
             >
-              TERMINATE UPLINK
-            </button>
-          </div>
-        )}
+              {/* ATHENA INTRO HEADLINE - FIXED TOP POSITION */}
+              <div className="fixed top-24 left-0 w-full flex flex-col items-center text-center space-y-4 z-50 px-4 pointer-events-none">
+                <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tighter drop-shadow-[0_0_25px_rgba(255,255,255,0.6)]">
+                  Hi, I'm Athena.
+                </h1>
+                <p className="text-sm md:text-base text-gray-300 font-mono tracking-[0.2em] uppercase drop-shadow-lg">
+                  Your Competitive Intelligence Companion
+                </p>
+              </div>
+
+              {/* White Glow Orb/Button - DEAD CENTER */}
+              <div className="w-16 h-16 rounded-full bg-white shadow-[0_0_50px_rgba(255,255,255,0.8)] mb-6 animate-pulse group-hover:scale-110 transition-transform duration-500"></div>
+
+              <span className="text-black font-bold text-lg tracking-widest bg-white/90 px-6 py-2 shadow-[0_0_30px_rgba(255,255,255,0.6)] transition-all group-hover:bg-white group-hover:shadow-[0_0_50px_rgba(255,255,255,0.9)]">
+                CLICK HERE TO BEGIN
+              </span>
+              <span className="mt-2 text-xs text-gray-500 tracking-[0.4em] uppercase opacity-70">
+                Initialize Intelligence
+              </span>
+
+              {mountError && (
+                <div className="mt-4 text-red-500 bg-red-900/20 px-4 py-2 text-xs border border-red-900/50 absolute top-full mt-4">
+                  {mountError}
+                </div>
+              )}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="controls"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute bottom-10 pointer-events-auto"
+            >
+              <button
+                onClick={endConversation}
+                className="text-red-500 text-xs tracking-[0.2em] border border-red-900/50 px-4 py-2 hover:bg-red-900/20 transition-colors bg-black/50 backdrop-blur"
+              >
+                TERMINATE UPLINK
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Status Indicators (Corner) */}
