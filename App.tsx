@@ -195,7 +195,7 @@ const App: React.FC = () => {
                   Hi, I'm Athena.
                 </h1>
                 <p className="text-lg md:text-xl text-gray-200 font-sans font-light drop-shadow-md">
-                  Your Competitive Intelligence Expert
+                  Your Competitive Intelligence Companion
                 </p>
               </div>
 
