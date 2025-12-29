@@ -1,0 +1,16 @@
+/* PDF break helpers */
+.pdf-page-break {
+  break-before: page;
+  page-break-before: always;
+}
+
+.pdf-avoid-break {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* If you use tailwind, ensure these exist even in prod builds */
+@media print {
+  .pdf-page-break { break-before: page; }
+  .pdf-avoid-break { break-inside: avoid; }
+}

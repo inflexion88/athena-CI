@@ -130,6 +130,7 @@ const App: React.FC = () => {
           // CLEANUP UI ARTIFACTS
           setBriefData(null);
           setDeepDossier(null);
+          setScanningTarget(null);
         },
         onError: (error: any) => {
           console.error("ElevenLabs Error:", error);
@@ -193,8 +194,8 @@ const App: React.FC = () => {
                 <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tighter drop-shadow-[0_0_25px_rgba(255,255,255,0.6)]">
                   Hi, I'm Athena.
                 </h1>
-                <p className="text-sm md:text-base text-gray-300 font-mono tracking-[0.2em] uppercase drop-shadow-lg">
-                  Your Competitive Intelligence Companion
+                <p className="text-lg md:text-xl text-gray-200 font-sans font-light drop-shadow-md">
+                  Your Competitive Intelligence Expert
                 </p>
               </div>
 
@@ -241,6 +242,23 @@ const App: React.FC = () => {
             {isConnected ? 'SYSTEM ONLINE' : 'OFFLINE'}
           </span>
         </div>
+      </div>
+
+      {/* MOBILE BLOCKER - FORCES DESKTOP */}
+      <div className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center p-8 text-center md:hidden">
+        <div className="w-16 h-16 border-2 border-red-500 rounded-full flex items-center justify-center mb-6 animate-pulse">
+          <svg className="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <h2 className="text-xl font-bold text-white tracking-widest uppercase mb-4">
+          Secure Terminal Required
+        </h2>
+        <p className="text-sm text-gray-400 font-mono tracking-wider leading-relaxed">
+          This intelligence platform requires a high-resolution desktop interface for data visualization.
+          <br /><br />
+          <span className="text-red-500">MOBILE CONNECTION REJECTED</span>
+        </p>
       </div>
 
     </div>

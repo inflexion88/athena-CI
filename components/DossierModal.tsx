@@ -34,36 +34,81 @@ const DossierModal: React.FC<DossierModalProps> = ({ report, deepDossier, onClos
       }
    }, [deepDossier?.is_ready]);
 
+   const waitForImages = async (root: HTMLElement) => {
+      const imgs = Array.from(root.querySelectorAll("img"));
+      await Promise.all(
+         imgs.map((img) => {
+            if (img.complete) return Promise.resolve();
+            return new Promise<void>((res) => {
+               img.addEventListener("load", () => res(), { once: true });
+               img.addEventListener("error", () => res(), { once: true });
+            });
+         })
+      );
+   };
+
    const handleDownload = async () => {
       if (!contentRef.current) return;
       setIsDownloading(true);
 
-      const element = contentRef.current;
+      // 1) Create hidden print stage attached to body (NOT inside modal/scroll containers)
+      const stage = document.createElement("div");
+      stage.style.position = "fixed";
+      stage.style.left = "-100000px";
+      stage.style.top = "0";
+      stage.style.width = "850px"; // match your layout width
+      stage.style.background = "#ffffff";
+      stage.style.overflow = "visible";
+      stage.style.zIndex = "2147483647";
 
-      // Configuration for "Light Mode" High Fidelity PDF
-      const opt = {
-         margin: [15, 15, 15, 15], // Standard document margins
-         filename: `${report.target_name.replace(/\s+/g, '_')}_STRATEGIC_AUDIT.pdf`,
-         image: { type: 'jpeg', quality: 0.98 },
-         html2canvas: {
-            scale: 2,
-            useCORS: true,
-            backgroundColor: '#ffffff',
-            logging: false,
-            letterRendering: true,
-            scrollY: 0,
-            windowWidth: 1200, // Force desktop render width
-         },
-         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-         pagebreak: { mode: ['css', 'legacy'] } // Rely on specific break classes
-      };
+      const clone = contentRef.current.cloneNode(true) as HTMLElement;
+
+      // 2) Hard-disable clipping/transform surprises
+      clone.style.maxWidth = "850px";
+      clone.style.width = "850px";
+      clone.style.overflow = "visible";
+      clone.style.transform = "none";
+
+      stage.appendChild(clone);
+      document.body.appendChild(stage);
 
       try {
-         await html2pdf().set(opt).from(element).save();
+         // 3) Wait for fonts + images (prevents late reflow that causes truncation)
+         // @ts-ignore
+         if (document.fonts?.ready) {
+            // @ts-ignore
+            await document.fonts.ready;
+         }
+         await waitForImages(clone);
+
+         const opt = {
+            margin: [12, 12, 12, 12],
+            filename: `${report.target_name.replace(/\s+/g, "_")}_STRATEGIC_AUDIT.pdf`,
+            image: { type: "jpeg", quality: 0.98 },
+            html2canvas: {
+               scale: 2,
+               useCORS: true,
+               backgroundColor: "#ffffff",
+               logging: false,
+               scrollX: 0,
+               scrollY: 0,
+               windowWidth: 850, // render as a stable desktop width
+            },
+            jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+            pagebreak: {
+               mode: ["css", "legacy"],
+               before: ".pdf-page-break",
+               avoid: [".pdf-avoid-break"],
+            },
+         };
+
+         // 4) Render the CLONE, not the live scrolled modal content
+         await html2pdf().set(opt).from(clone).save();
       } catch (err) {
          console.error("PDF Generation Failed", err);
          alert("Download failed. Please try again.");
       } finally {
+         document.body.removeChild(stage);
          setIsDownloading(false);
       }
    };
@@ -189,7 +234,7 @@ const DossierModal: React.FC<DossierModalProps> = ({ report, deepDossier, onClos
                      <div className="space-y-12">
 
                         {/* 1. EXECUTIVE SUMMARY */}
-                        <section className="html2pdf__page-break">
+                        <section className="pdf-avoid-break">
                            <h2 className="font-sans text-xs font-black text-black uppercase tracking-[0.2em] mb-6 border-b border-gray-200 pb-2 flex items-center gap-2">
                               {/* SIMPLIFIED HEADER FOR PDF SAFETY */}
                               <span className="text-black font-bold mr-2">01</span> Executive Judgment
@@ -213,7 +258,7 @@ const DossierModal: React.FC<DossierModalProps> = ({ report, deepDossier, onClos
 
                         {/* 2. DYNAMIC SECTIONS */}
                         {deepDossier.sections.filter(s => !s.title.includes("SUMMARY")).map((section, idx) => (
-                           <section key={idx} className="html2pdf__page-break">
+                           <section key={idx} className="pdf-page-break">
                               <h2 className="font-sans text-xs font-black text-black uppercase tracking-[0.2em] mb-6 border-b border-gray-200 pb-2 flex items-center gap-2">
                                  <span className="text-gray-500 font-bold mr-2">0{idx + 2}</span> {section.title}
                               </h2>
@@ -261,7 +306,7 @@ const DossierModal: React.FC<DossierModalProps> = ({ report, deepDossier, onClos
                         ))}
 
                         {/* SOURCES FOOTER */}
-                        <div className="pt-12 mt-12 border-t border-gray-200 html2pdf__page-break">
+                        <div className="pt-12 mt-12 border-t border-gray-200 pdf-page-break">
                            <h4 className="font-sans text-[9px] font-bold uppercase mb-6 text-gray-500 tracking-widest">Reference Links</h4>
                            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-8">
                               {deepDossier.sources.map((source, i) => (
