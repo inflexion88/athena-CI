@@ -204,8 +204,7 @@ const App: React.FC = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0, transition: { duration: 0.5 } }}
-                            onClick={startConversation}
-                            className="pointer-events-auto cursor-pointer group flex flex-col items-center justify-center z-50 relative"
+                            className="pointer-events-auto flex flex-col items-center justify-center z-50 relative"
                         >
                             {/* ATHENA INTRO HEADLINE - FIXED TOP POSITION */}
                             <div className="fixed top-24 left-0 w-full flex flex-col items-center text-center space-y-4 z-50 px-4 pointer-events-none">
@@ -217,15 +216,20 @@ const App: React.FC = () => {
                                 </p>
                             </div>
 
-                            {/* White Glow Orb/Button - DEAD CENTER */}
-                            <div className="w-16 h-16 rounded-full bg-white shadow-[0_0_50px_rgba(255,255,255,0.8)] mb-6 animate-pulse group-hover:scale-110 transition-transform duration-500"></div>
+                            {/* White Glow Orb/Button - DEAD CENTER - CLICKABLE */}
+                            <div
+                                onClick={startConversation}
+                                className="cursor-pointer group flex flex-col items-center justify-center"
+                            >
+                                <div className="w-16 h-16 rounded-full bg-white shadow-[0_0_50px_rgba(255,255,255,0.8)] mb-6 animate-pulse group-hover:scale-110 transition-transform duration-500"></div>
 
-                            <span className="text-black font-bold text-lg tracking-widest bg-white/90 px-6 py-2 shadow-[0_0_30px_rgba(255,255,255,0.6)] transition-all group-hover:bg-white group-hover:shadow-[0_0_50px_rgba(255,255,255,0.9)]">
-                                CLICK HERE TO BEGIN
-                            </span>
-                            <span className="mt-2 text-xs text-gray-500 tracking-[0.4em] uppercase opacity-70">
-                                Initialize Intelligence
-                            </span>
+                                <span className="text-black font-bold text-lg tracking-widest bg-white/90 px-6 py-2 shadow-[0_0_30px_rgba(255,255,255,0.6)] transition-all group-hover:bg-white group-hover:shadow-[0_0_50px_rgba(255,255,255,0.9)]">
+                                    CLICK HERE TO BEGIN
+                                </span>
+                                <span className="mt-2 text-xs text-gray-500 tracking-[0.4em] uppercase opacity-70">
+                                    Initialize Intelligence
+                                </span>
+                            </div>
 
                             {/* TACTICAL INPUT FIELD */}
                             <div className="mt-8 relative w-64 group/input">
@@ -234,6 +238,7 @@ const App: React.FC = () => {
                                     type="text"
                                     value={targetUrl}
                                     onChange={(e) => setTargetUrl(e.target.value)}
+                                    onKeyDown={(e) => e.key === 'Enter' && startConversation()}
                                     placeholder="ENTER TARGET URL..."
                                     className="w-full bg-transparent text-center font-mono text-cyan-500 text-sm uppercase tracking-widest placeholder:text-gray-800 focus:outline-none py-2"
                                 />
@@ -244,7 +249,10 @@ const App: React.FC = () => {
 
                             {/* DYNAMIC BUTTON TEXT based on Input */}
                             {targetUrl && (
-                                <div className="mt-4 animate-pulse text-[10px] text-cyan-500 uppercase tracking-widest font-mono">
+                                <div
+                                    onClick={startConversation}
+                                    className="mt-4 animate-pulse text-[10px] text-cyan-500 uppercase tracking-widest font-mono cursor-pointer hover:text-cyan-400"
+                                >
                                     &gt;&gt; READY TO EXECUTE
                                 </div>
                             )}
