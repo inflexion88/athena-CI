@@ -132,8 +132,11 @@ const IntelDisplay: React.FC<IntelDisplayProps> = ({ report, deepDossier, scanni
         transition={{ duration: 0.8, ease: "easeOut" }}
         className="absolute inset-0 z-20 pointer-events-none flex justify-center print:hidden"
       >
-        {/* COMPACTED VIEWPORT CONTAINER - Centered content with room for Terminate button */}
-        <div className="w-full max-w-[1600px] h-full relative flex flex-col justify-center pt-5 px-5 md:pt-10 md:px-10 pb-24">
+        {/* COMPACTED VIEWPORT CONTAINER - Content centered, gradient extends to bottom */}
+        <div className="w-full max-w-[1600px] h-full relative flex flex-col justify-center pt-5 px-5 md:pt-10 md:px-10 pb-0">
+
+          {/* FULL-HEIGHT GRADIENT BACKGROUND - Extends to viewport bottom */}
+          <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black via-black/95 to-transparent pointer-events-none z-0"></div>
 
           {/* BACKGROUND GRID LINES (Subtle) */}
           <div className="absolute inset-0 z-0 opacity-10 pointer-events-none border-x border-white/10 mx-5 md:mx-10">
@@ -164,8 +167,8 @@ const IntelDisplay: React.FC<IntelDisplayProps> = ({ report, deepDossier, scanni
           </div>
 
 
-          {/* BOTTOM MAG - 12 COLUMN GRID RESTRUCTURED. Centered with spacing. */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-end pointer-events-auto border-t border-white/20 pt-8 relative z-10 bg-gradient-to-t from-black via-black/90 to-transparent mt-auto">
+          {/* BOTTOM MAG - 12 COLUMN GRID RESTRUCTURED. Positioned above the gradient, with bottom padding for terminate button */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-end pointer-events-auto border-t border-white/20 pt-8 pb-24 relative z-10 mt-auto">
 
             {/* LEFT PRIMARY BLOCK (Cols 1-7): Frame + Directive */}
             <div className="md:col-span-7 flex flex-col space-y-6">
