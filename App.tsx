@@ -32,6 +32,9 @@ const App: React.FC = () => {
     // SESSION ID PATTERN: Prevents stale data from populating after terminate
     const sessionIdRef = useRef<number>(0);
 
+    // Conversation ref for accessing conversation object in callbacks
+    const conversationRef = useRef<any>(null);
+
     // Tool 1: Scan (The Eye)
     const scanCompetitor = useCallback(async (params: { name: string; url?: string }) => {
         console.log("TOOL CALLED: scan_competitor", params);
@@ -64,6 +67,20 @@ const App: React.FC = () => {
                 }
                 console.log("Deep Dossier Ready");
                 setDeepDossier(dossier);
+
+                // NOTIFY AGENT: Send contextual update so agent can announce dossier completion
+                if (conversationRef.current) {
+                    try {
+                        // Using user message to trigger agent response about dossier
+                        conversationRef.current.sendMessage?.({
+                            type: 'user_message',
+                            text: 'SYSTEM: Deep audit research complete. Offer to read the detailed findings.'
+                        });
+                        console.log('Sent dossier notification to agent');
+                    } catch (e) {
+                        console.log('Could not notify agent about dossier completion');
+                    }
+                }
             });
 
             // Return script for agent
@@ -166,6 +183,7 @@ const App: React.FC = () => {
             } as any);
 
             setConversation(conv);
+            conversationRef.current = conv; // Store in ref for callback access
 
         } catch (error: any) {
             console.error("Failed to start conversation:", error);
