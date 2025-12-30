@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@elevenlabs/client": "^0.12.2",
+    "@11labs/client": "0.0.5",
     "@google/genai": "latest",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
