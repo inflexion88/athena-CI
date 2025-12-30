@@ -22,12 +22,19 @@ const App: React.FC = () => {
     const [isConnected, setIsConnected] = useState(false);
     const [conversation, setConversation] = useState<any>(null);
     const [mountError, setMountError] = useState<string | null>(null);
+    const [targetUrl, setTargetUrl] = useState("");
 
     // Ref pattern to allow tools to access fresh state without closures
     const briefDataRef = useRef<ExecutiveBrief | null>(null);
+    const targetUrlRef = useRef(targetUrl);
+
     useEffect(() => {
         briefDataRef.current = briefData;
     }, [briefData]);
+
+    useEffect(() => {
+        targetUrlRef.current = targetUrl;
+    }, [targetUrl]);
 
     // Tool 1: Scan (The Eye)
     const scanCompetitor = useCallback(async (params: { name: string; url?: string }) => {
@@ -122,6 +129,12 @@ const App: React.FC = () => {
                     console.log("ElevenLabs Connected");
                     setIsConnected(true);
                     setUiState(UIState.IDLE);
+
+                    // AUTO-TRIGGER if URL is present
+                    if (targetUrlRef.current) {
+                        console.log("Auto-executing for:", targetUrlRef.current);
+                        scanCompetitor({ name: targetUrlRef.current });
+                    }
                 },
                 onDisconnect: () => {
                     console.log("ElevenLabs Disconnected");
@@ -131,6 +144,7 @@ const App: React.FC = () => {
                     setBriefData(null);
                     setDeepDossier(null);
                     setScanningTarget(null);
+                    setTargetUrl(""); // Reset input
                 },
                 onError: (error: any) => {
                     console.error("ElevenLabs Error:", error);
@@ -209,6 +223,28 @@ const App: React.FC = () => {
                                 Initialize Intelligence
                             </span>
 
+                            {/* TACTICAL INPUT FIELD */}
+                            <div className="mt-8 relative w-64 group/input">
+                                <div className="absolute inset-x-0 bottom-0 h-px bg-gray-700 group-focus-within/input:bg-cyan-500 transition-colors"></div>
+                                <input
+                                    type="text"
+                                    value={targetUrl}
+                                    onChange={(e) => setTargetUrl(e.target.value)}
+                                    placeholder="ENTER TARGET URL..."
+                                    className="w-full bg-transparent text-center font-mono text-cyan-500 text-sm uppercase tracking-widest placeholder:text-gray-800 focus:outline-none py-2"
+                                />
+                                {/* DECORATIVE CORNERS */}
+                                <div className="absolute bottom-0 left-0 w-1 h-1 bg-gray-700 group-focus-within/input:bg-cyan-500 transition-colors"></div>
+                                <div className="absolute bottom-0 right-0 w-1 h-1 bg-gray-700 group-focus-within/input:bg-cyan-500 transition-colors"></div>
+                            </div>
+
+                            {/* DYNAMIC BUTTON TEXT based on Input */}
+                            {targetUrl && (
+                                <div className="mt-4 animate-pulse text-[10px] text-cyan-500 uppercase tracking-widest font-mono">
+                                    &gt;&gt; READY TO EXECUTE
+                                </div>
+                            )}
+
                             {mountError && (
                                 <div className="mt-4 text-red-500 bg-red-900/20 px-4 py-2 text-xs border border-red-900/50 absolute top-full mt-4">
                                     {mountError}
@@ -225,7 +261,7 @@ const App: React.FC = () => {
                         >
                             <button
                                 onClick={endConversation}
-                                className="text-red-500 text-xs tracking-[0.2em] hover:text-red-400 transition-colors"
+                                className="text-red-500 text-xs font-bold tracking-[0.2em] border border-red-900/50 px-6 py-3 hover:bg-red-900/20 transition-all bg-black/80 backdrop-blur uppercase"
                             >
                                 TERMINATE UPLINK
                             </button>

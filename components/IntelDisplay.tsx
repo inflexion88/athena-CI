@@ -165,7 +165,7 @@ const IntelDisplay: React.FC<IntelDisplayProps> = ({ report, deepDossier, scanni
 
 
           {/* BOTTOM MAG - 12 COLUMN GRID RESTRUCTURED */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-end pointer-events-auto border-t border-white/20 pt-8 relative z-10 bg-gradient-to-t from-black via-black/80 to-transparent pb-8">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-end pointer-events-auto border-t border-white/20 pt-8 relative z-10 bg-gradient-to-t from-black via-black/90 to-transparent pb-32 -mx-5 md:-mx-10 px-5 md:px-10">
 
             {/* LEFT PRIMARY BLOCK (Cols 1-7): Frame + Directive */}
             <div className="md:col-span-7 flex flex-col space-y-6">
