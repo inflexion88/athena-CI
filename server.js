@@ -91,9 +91,9 @@ app.post('/api/brief', async (req, res) => {
 
         console.log(`[Brief] Analyzing: ${companyName}...`);
 
-        // Using 'gemini-3-pro-preview' for high-fidelity reasoning
+        // Using 'gemini-3-flash-preview' for exquisitely fast visualization
         const response = await ai.models.generateContent({
-            model: 'gemini-3-pro-preview',
+            model: 'gemini-3-flash-preview',
             contents: prompt,
             config: {
                 tools: [{ googleSearch: {} }],
