@@ -50,8 +50,9 @@ const App: React.FC = () => {
       });
 
       // Return script for agent
-      return `
-        Here is the strategic frame: ${brief.frame.sentence}
+      return `SYSTEM INSTRUCTION: Read the following intelligence briefing VERBATIM to the user. Do not summarize.
+      
+      "Here is the strategic frame: ${brief.frame.sentence}
         
         Situation Report: ${brief.frame.what_changed} This is critical because ${brief.frame.why_it_matters}
         
