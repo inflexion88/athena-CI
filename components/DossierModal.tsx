@@ -255,8 +255,8 @@ const DossierModal: React.FC<DossierModalProps> = ({ report, deepDossier, onClos
                            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-8">
                               {deepDossier.sources.map((source, i) => (
                                  <div key={i} className="flex gap-3 items-baseline group">
-                                    <span className="font-mono text-[9px] text-gray-400">[{i + 1}]</span>
-                                    <a href={source} target="_blank" rel="noreferrer" className="text-[10px] text-gray-500 font-mono truncate hover:text-black underline decoration-gray-300 hover:decoration-black transition-all">
+                                    <span className="font-mono text-[9px] text-gray-400 shrink-0">[{i + 1}]</span>
+                                    <a href={source} target="_blank" rel="noreferrer" className="text-[10px] text-gray-500 font-mono break-all whitespace-normal hover:text-black underline decoration-gray-300 hover:decoration-black transition-all">
                                        {source}
                                     </a>
                                  </div>
