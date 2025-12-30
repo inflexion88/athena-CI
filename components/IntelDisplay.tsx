@@ -133,7 +133,7 @@ const IntelDisplay: React.FC<IntelDisplayProps> = ({ report, deepDossier, scanni
         className="absolute inset-0 z-20 pointer-events-none flex justify-center print:hidden"
       >
         {/* COMPACTED VIEWPORT CONTAINER - WIDENED to 1600px, REDUCED PADDING to p-10 */}
-        <div className="w-full max-w-[1600px] h-full relative flex flex-col justify-end p-5 md:p-10">
+        <div className="w-full max-w-[1600px] h-full relative flex flex-col justify-between p-5 md:p-10">
 
           {/* BACKGROUND GRID LINES (Subtle) */}
           <div className="absolute inset-0 z-0 opacity-10 pointer-events-none border-x border-white/10 mx-5 md:mx-10">
@@ -141,7 +141,7 @@ const IntelDisplay: React.FC<IntelDisplayProps> = ({ report, deepDossier, scanni
           </div>
 
           {/* TOP HEADER - CONTEXT */}
-          <div className="absolute top-10 left-5 right-5 md:left-10 md:right-10 flex justify-between items-start pointer-events-auto">
+          <div className="w-full flex justify-between items-start pointer-events-auto">
             <div className="flex flex-col">
               <div className="flex items-center space-x-3 mb-2">
                 <div className="w-2 h-2 bg-cyan-500 animate-pulse"></div>
@@ -172,7 +172,7 @@ const IntelDisplay: React.FC<IntelDisplayProps> = ({ report, deepDossier, scanni
 
               <div className="space-y-4">
                 <span className="text-cyan-400 font-mono text-[10px] uppercase tracking-[0.2em] block border-l-2 border-cyan-500 pl-2">Strategic Frame</span>
-                <p className="text-xl md:text-2xl font-light text-white leading-relaxed">
+                <p className="text-lg md:text-xl font-light text-white leading-relaxed">
                   {report.frame.sentence}
                 </p>
               </div>
@@ -180,7 +180,7 @@ const IntelDisplay: React.FC<IntelDisplayProps> = ({ report, deepDossier, scanni
               {/* 2. DIRECTIVE (Moved from Right, Left Aligned) */}
               <div className="flex flex-col items-start text-left">
                 <span className="text-orange-500 font-mono text-[10px] uppercase tracking-[0.2em] block mb-2">Operational Directive</span>
-                <h2 className="text-xl md:text-2xl font-bold text-white mb-4 leading-tight max-w-4xl">
+                <h2 className="text-lg md:text-xl font-bold text-white mb-4 leading-tight max-w-4xl">
                   {report.strategy.recommended_move}
                 </h2>
                 <div className="bg-orange-900/10 border border-orange-500/20 p-4 w-full mb-4">

@@ -2,8 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { ExecutiveBrief, DeepDossier } from '../types';
-// @ts-ignore
-import html2pdf from 'html2pdf.js';
+import { generateDossierHTML } from '../utils/dossierGenerator';
 
 interface DossierModalProps {
    report: ExecutiveBrief;
@@ -34,81 +33,26 @@ const DossierModal: React.FC<DossierModalProps> = ({ report, deepDossier, onClos
       }
    }, [deepDossier?.is_ready]);
 
-   const waitForImages = async (root: HTMLElement) => {
-      const imgs = Array.from(root.querySelectorAll("img"));
-      await Promise.all(
-         imgs.map((img) => {
-            if (img.complete) return Promise.resolve();
-            return new Promise<void>((res) => {
-               img.addEventListener("load", () => res(), { once: true });
-               img.addEventListener("error", () => res(), { once: true });
-            });
-         })
-      );
-   };
-
-   const handleDownload = async () => {
-      if (!contentRef.current) return;
+   const handleDownload = () => {
+      if (!deepDossier) return;
       setIsDownloading(true);
 
-      // 1) Create hidden print stage attached to body (NOT inside modal/scroll containers)
-      const stage = document.createElement("div");
-      stage.style.position = "fixed";
-      stage.style.left = "-100000px";
-      stage.style.top = "0";
-      stage.style.width = "850px"; // match your layout width
-      stage.style.background = "#ffffff";
-      stage.style.overflow = "visible";
-      stage.style.zIndex = "2147483647";
-
-      const clone = contentRef.current.cloneNode(true) as HTMLElement;
-
-      // 2) Hard-disable clipping/transform surprises
-      clone.style.maxWidth = "850px";
-      clone.style.width = "850px";
-      clone.style.overflow = "visible";
-      clone.style.transform = "none";
-
-      stage.appendChild(clone);
-      document.body.appendChild(stage);
-
       try {
-         // 3) Wait for fonts + images (prevents late reflow that causes truncation)
-         // @ts-ignore
-         if (document.fonts?.ready) {
-            // @ts-ignore
-            await document.fonts.ready;
-         }
-         await waitForImages(clone);
+         const htmlContent = generateDossierHTML(report, deepDossier);
+         const blob = new Blob([htmlContent], { type: 'text/html' });
+         const url = URL.createObjectURL(blob);
 
-         const opt = {
-            margin: [12, 12, 12, 12],
-            filename: `${report.target_name.replace(/\s+/g, "_")}_STRATEGIC_AUDIT.pdf`,
-            image: { type: "jpeg", quality: 0.98 },
-            html2canvas: {
-               scale: 2,
-               useCORS: true,
-               backgroundColor: "#ffffff",
-               logging: false,
-               scrollX: 0,
-               scrollY: 0,
-               windowWidth: 850, // render as a stable desktop width
-            },
-            jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-            pagebreak: {
-               mode: ["css", "legacy"],
-               before: ".pdf-page-break",
-               avoid: [".pdf-avoid-break"],
-            },
-         };
-
-         // 4) Render the CLONE, not the live scrolled modal content
-         await html2pdf().set(opt).from(clone).save();
+         const a = document.createElement('a');
+         a.href = url;
+         a.download = `Athena_Intel_${report.target_name.replace(/\s+/g, "_")}.html`;
+         document.body.appendChild(a);
+         a.click();
+         document.body.removeChild(a);
+         URL.revokeObjectURL(url);
       } catch (err) {
-         console.error("PDF Generation Failed", err);
-         alert("Download failed. Please try again.");
+         console.error("Export Failed", err);
+         alert("Export failed. Please try again.");
       } finally {
-         document.body.removeChild(stage);
          setIsDownloading(false);
       }
    };
@@ -143,7 +87,7 @@ const DossierModal: React.FC<DossierModalProps> = ({ report, deepDossier, onClos
                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                      </svg>
-                     {isDownloading ? "GENERATING PDF..." : "DOWNLOAD DOSSIER"}
+                     {isDownloading ? "PACKAGING ARTIFACT..." : "EXPORT DIGITAL DOSSIER"}
                   </button>
 
                   <div className="h-4 w-px bg-gray-300"></div>

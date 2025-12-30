@@ -225,7 +225,7 @@ const App: React.FC = () => {
                         >
                             <button
                                 onClick={endConversation}
-                                className="text-red-500 text-xs tracking-[0.2em] border border-red-900/50 px-4 py-2 hover:bg-red-900/20 transition-colors bg-black/50 backdrop-blur"
+                                className="text-red-500 text-xs tracking-[0.2em] hover:text-red-400 transition-colors"
                             >
                                 TERMINATE UPLINK
                             </button>
