@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Conversation } from '@elevenlabs/client';
+import { ELEVENLABS_SYSTEM_PROMPT } from './constants';
 import BlackHole from './components/BlackHole';
 import IntelDisplay from './components/IntelDisplay';
 import { generateExecutiveBrief, generateDeepDossier } from './geminiService';
@@ -144,6 +145,13 @@ const App: React.FC = () => {
             setUiState(UIState.SPEAKING);
           } else if (mode.mode === 'listening') {
             setUiState(UIState.LISTENING);
+          }
+        },
+        overrides: {
+          agent: {
+            prompt: {
+              prompt: ELEVENLABS_SYSTEM_PROMPT
+            }
           }
         }
       } as any);
