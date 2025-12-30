@@ -132,8 +132,8 @@ const IntelDisplay: React.FC<IntelDisplayProps> = ({ report, deepDossier, scanni
         transition={{ duration: 0.8, ease: "easeOut" }}
         className="absolute inset-0 z-20 pointer-events-none flex justify-center print:hidden"
       >
-        {/* COMPACTED VIEWPORT CONTAINER - WIDENED to 1600px, REDUCED PADDING to p-10. REMOVED BOTTOM PADDING for flush gradient. */}
-        <div className="w-full max-w-[1600px] h-full relative flex flex-col justify-between pt-5 px-5 md:pt-10 md:px-10 pb-0">
+        {/* COMPACTED VIEWPORT CONTAINER - Centered content with room for Terminate button */}
+        <div className="w-full max-w-[1600px] h-full relative flex flex-col justify-center pt-5 px-5 md:pt-10 md:px-10 pb-24">
 
           {/* BACKGROUND GRID LINES (Subtle) */}
           <div className="absolute inset-0 z-0 opacity-10 pointer-events-none border-x border-white/10 mx-5 md:mx-10">
@@ -141,7 +141,7 @@ const IntelDisplay: React.FC<IntelDisplayProps> = ({ report, deepDossier, scanni
           </div>
 
           {/* TOP HEADER - CONTEXT */}
-          <div className="w-full flex justify-between items-start pointer-events-auto">
+          <div className="w-full flex justify-between items-start pointer-events-auto mb-auto">
             <div className="flex flex-col">
               <div className="flex items-center space-x-3 mb-2">
                 <div className="w-2 h-2 bg-cyan-500 animate-pulse"></div>
@@ -164,8 +164,8 @@ const IntelDisplay: React.FC<IntelDisplayProps> = ({ report, deepDossier, scanni
           </div>
 
 
-          {/* BOTTOM MAG - 12 COLUMN GRID RESTRUCTURED. Added pb-10 to compensate for removed parent padding. */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-end pointer-events-auto border-t border-white/20 pt-8 relative z-10 bg-gradient-to-t from-black via-black/90 to-transparent pb-10">
+          {/* BOTTOM MAG - 12 COLUMN GRID RESTRUCTURED. Centered with spacing. */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-end pointer-events-auto border-t border-white/20 pt-8 relative z-10 bg-gradient-to-t from-black via-black/90 to-transparent mt-auto">
 
             {/* LEFT PRIMARY BLOCK (Cols 1-7): Frame + Directive */}
             <div className="md:col-span-7 flex flex-col space-y-6">

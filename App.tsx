@@ -29,6 +29,9 @@ const App: React.FC = () => {
         briefDataRef.current = briefData;
     }, [briefData]);
 
+    // SESSION ID PATTERN: Prevents stale data from populating after terminate
+    const sessionIdRef = useRef<number>(0);
+
     // Tool 1: Scan (The Eye)
     const scanCompetitor = useCallback(async (params: { name: string; url?: string }) => {
         console.log("TOOL CALLED: scan_competitor", params);
@@ -37,14 +40,28 @@ const App: React.FC = () => {
         setDeepDossier(null); // Reset deep dossier
 
         try {
+            const currentSession = sessionIdRef.current; // Capture session at start
+
             // 1. Fast Path: Executive Brief
             const brief = await generateExecutiveBrief(params.name, params.url);
+
+            // ABORT CHECK: Don't update state if session was terminated
+            if (sessionIdRef.current !== currentSession) {
+                console.log("Session terminated, aborting Brief update");
+                return "Session terminated.";
+            }
+
             setBriefData(brief);
             setUiState(UIState.SPEAKING);
             setScanningTarget(null); // Clear loading text once data is ready
 
             // 2. Slow Path: Fire & Forget Deep Dossier (Background)
             generateDeepDossier(params.name).then(dossier => {
+                // ABORT CHECK for Dossier too
+                if (sessionIdRef.current !== currentSession) {
+                    console.log("Session terminated, aborting Dossier update");
+                    return;
+                }
                 console.log("Deep Dossier Ready");
                 setDeepDossier(dossier);
             });
@@ -158,6 +175,16 @@ const App: React.FC = () => {
     };
 
     const endConversation = async () => {
+        // INCREMENT SESSION ID to invalidate in-flight requests
+        sessionIdRef.current += 1;
+        console.log("Session terminated, new sessionId:", sessionIdRef.current);
+
+        // Immediately clear all data
+        setBriefData(null);
+        setDeepDossier(null);
+        setScanningTarget(null);
+        setUiState(UIState.IDLE);
+
         if (conversation) {
             await conversation.endSession();
             setConversation(null);
