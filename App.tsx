@@ -167,7 +167,13 @@ const App: React.FC = () => {
                 await new Promise(resolve => setTimeout(resolve, 1000));
 
                 // @ts-ignore
-                if (typeof conv.sendText === 'function') {
+                if (typeof conv.sendUserMessage === 'function') {
+                    console.log("Using sendUserMessage trigger");
+                    // @ts-ignore
+                    await conv.sendUserMessage(prompt);
+                }
+                // @ts-ignore
+                else if (typeof conv.sendText === 'function') {
                     console.log("Using sendText trigger");
                     // @ts-ignore
                     await conv.sendText(prompt);
