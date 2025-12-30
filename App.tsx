@@ -161,7 +161,8 @@ const App: React.FC = () => {
             // TACTICAL TRIGGER: Send text to agent to simulate voice input
             if (targetUrlRef.current) {
                 console.log("Attempting to trigger agent with URL:", targetUrlRef.current);
-                const prompt = `Analyze ${targetUrlRef.current}`;
+                // FORCE TOOL USE: Use explicit instruction to ensuring the LLM picks the tool
+                const prompt = `System Command: Execute scan_competitor tool for target "${targetUrlRef.current}" immediately. Do not ask for confirmation.`;
 
                 // Allow session to stabilize
                 await new Promise(resolve => setTimeout(resolve, 1000));
