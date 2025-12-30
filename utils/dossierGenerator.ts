@@ -220,7 +220,7 @@ export const generateDossierHTML = (brief: ExecutiveBrief, dossier: DeepDossier)
       color: #666;
     }
     
-    .source-item a { color: #666; text-decoration: underline; word-break: break-all; }
+    .source-item a { color: #666; text-decoration: underline; }
 
     /* Utilities */
     .color-high { color: #166534; }

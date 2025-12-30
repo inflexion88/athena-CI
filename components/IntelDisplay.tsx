@@ -132,8 +132,8 @@ const IntelDisplay: React.FC<IntelDisplayProps> = ({ report, deepDossier, scanni
         transition={{ duration: 0.8, ease: "easeOut" }}
         className="absolute inset-0 z-20 pointer-events-none flex justify-center print:hidden"
       >
-        {/* COMPACTED VIEWPORT CONTAINER - WIDENED to 1600px, REDUCED PADDING to p-10 */}
-        <div className="w-full max-w-[1600px] h-full relative flex flex-col justify-between p-5 md:p-10">
+        {/* COMPACTED VIEWPORT CONTAINER - WIDENED to 1600px, REDUCED PADDING to p-10. REMOVED BOTTOM PADDING for flush gradient. */}
+        <div className="w-full max-w-[1600px] h-full relative flex flex-col justify-between pt-5 px-5 md:pt-10 md:px-10 pb-0">
 
           {/* BACKGROUND GRID LINES (Subtle) */}
           <div className="absolute inset-0 z-0 opacity-10 pointer-events-none border-x border-white/10 mx-5 md:mx-10">
@@ -164,8 +164,8 @@ const IntelDisplay: React.FC<IntelDisplayProps> = ({ report, deepDossier, scanni
           </div>
 
 
-          {/* BOTTOM MAG - 12 COLUMN GRID RESTRUCTURED */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-end pointer-events-auto border-t border-white/20 pt-32 relative z-10 bg-gradient-to-t from-black via-black/95 to-transparent pb-32 -mx-5 md:-mx-10 px-5 md:px-10">
+          {/* BOTTOM MAG - 12 COLUMN GRID RESTRUCTURED. Added pb-10 to compensate for removed parent padding. */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-end pointer-events-auto border-t border-white/20 pt-8 relative z-10 bg-gradient-to-t from-black via-black/90 to-transparent pb-10">
 
             {/* LEFT PRIMARY BLOCK (Cols 1-7): Frame + Directive */}
             <div className="md:col-span-7 flex flex-col space-y-6">
