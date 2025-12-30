@@ -80,13 +80,13 @@ const IntelDisplay: React.FC<IntelDisplayProps> = ({ report, deepDossier, scanni
 
           <div className="flex flex-col items-center space-y-6 w-full">
 
-            {/* Target Identity */}
+            {/* Target Identity - STRIPPED TLD */}
             <div className="flex flex-col items-center space-y-2">
               <span className="text-cyan-400 font-mono text-[9px] tracking-[0.4em] uppercase opacity-80 animate-pulse">
                 {loadingStage}
               </span>
               <h2 className="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/50 uppercase tracking-tight leading-none text-center drop-shadow-[0_0_15px_rgba(0,0,0,1)]">
-                {scanningTarget}
+                {scanningTarget?.replace(/\.(com|net|org|io|ai|co|uk)/gi, '')}
               </h2>
             </div>
 
@@ -147,9 +147,9 @@ const IntelDisplay: React.FC<IntelDisplayProps> = ({ report, deepDossier, scanni
                 <div className="w-2 h-2 bg-cyan-500 animate-pulse"></div>
                 <span className="text-cyan-500 font-mono text-xs tracking-[0.3em] uppercase">Executive Intelligence Brief</span>
               </div>
-              {/* MASSIVE TARGET NAME */}
+              {/* MASSIVE TARGET NAME - STRIPPED TLD */}
               <h1 className="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-600 uppercase tracking-tighter leading-none">
-                {report.target_name}
+                {report.target_name.replace(/\.(com|net|org|io|ai|co|uk)/gi, '')}
               </h1>
             </div>
 
@@ -164,8 +164,11 @@ const IntelDisplay: React.FC<IntelDisplayProps> = ({ report, deepDossier, scanni
           </div>
 
 
+          {/* BOTTOM GRADIENT ANCHOR - ABSOLUTE POSITIONING TO FIX GAP */}
+          <div className="absolute bottom-0 left-0 right-0 h-[60vh] bg-gradient-to-t from-black via-black/90 to-transparent z-0 pointer-events-none"></div>
+
           {/* BOTTOM MAG - 12 COLUMN GRID RESTRUCTURED */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-end pointer-events-auto border-t border-white/20 pt-8 relative z-10 bg-gradient-to-t from-black via-black/90 to-transparent pb-32 -mx-5 md:-mx-10 px-5 md:px-10">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-end pointer-events-auto border-t border-white/20 pt-8 relative z-10 pb-32 -mx-5 md:-mx-10 px-5 md:px-10">
 
             {/* LEFT PRIMARY BLOCK (Cols 1-7): Frame + Directive */}
             <div className="md:col-span-7 flex flex-col space-y-6">

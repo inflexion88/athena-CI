@@ -1,20 +1,20 @@
 import { ExecutiveBrief, DeepDossier } from '../types';
 
 export const generateDossierHTML = (brief: ExecutiveBrief, dossier: DeepDossier): string => {
-    const dateStr = new Date().toLocaleDateString();
-    const timeStr = new Date().toISOString();
+  const dateStr = new Date().toLocaleDateString();
+  const timeStr = new Date().toISOString();
 
-    // Basic Markdown->HTML parser for the specific AI output structure
-    const parseMarkdown = (text: string) => {
-        let html = text
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            .replace(/\*(.*?)\*/g, '<em>$1</em>')
-            .replace(/`(.*?)`/g, '<code>$1</code>');
-        return html;
-    };
+  // Basic Markdown->HTML parser for the specific AI output structure
+  const parseMarkdown = (text: string) => {
+    let html = text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/`(.*?)`/g, '<code>$1</code>');
+    return html;
+  };
 
-    const renderSection = (title: string, content: string[], metrics: { label: string; value: string }[]) => {
-        return `
+  const renderSection = (title: string, content: string[], metrics: { label: string; value: string }[]) => {
+    return `
       <section class="section-break">
         <h2 class="section-title">
           <span style="color: #666; margin-right: 8px;">//</span> ${title}
@@ -41,9 +41,9 @@ export const generateDossierHTML = (brief: ExecutiveBrief, dossier: DeepDossier)
         </div>
       </section>
     `;
-    };
+  };
 
-    const css = `
+  const css = `
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&display=swap');
 
     :root {
@@ -220,7 +220,7 @@ export const generateDossierHTML = (brief: ExecutiveBrief, dossier: DeepDossier)
       color: #666;
     }
     
-    .source-item a { color: #666; text-decoration: underline; }
+    .source-item a { color: #666; text-decoration: underline; word-break: break-all; }
 
     /* Utilities */
     .color-high { color: #166534; }
@@ -235,7 +235,7 @@ export const generateDossierHTML = (brief: ExecutiveBrief, dossier: DeepDossier)
     }
   `;
 
-    return `<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">

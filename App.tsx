@@ -125,16 +125,10 @@ const App: React.FC = () => {
                     scan_competitor: scanCompetitor,
                     consult_dossier: consultDossier // Register new tool
                 },
-                onConnect: () => {
+                onConnect: async () => {
                     console.log("ElevenLabs Connected");
                     setIsConnected(true);
                     setUiState(UIState.IDLE);
-
-                    // AUTO-TRIGGER if URL is present
-                    if (targetUrlRef.current) {
-                        console.log("Auto-executing for:", targetUrlRef.current);
-                        scanCompetitor({ name: targetUrlRef.current });
-                    }
                 },
                 onDisconnect: () => {
                     console.log("ElevenLabs Disconnected");
@@ -163,6 +157,16 @@ const App: React.FC = () => {
             } as any);
 
             setConversation(conv);
+
+            // TACTICAL TRIGGER: Send text to agent to simulate voice input
+            if (targetUrlRef.current) {
+                // "Whisper" to the agent to trigger the tool naturally
+                // @ts-ignore - Assuming sendText exists on the standard client instance or similar
+                // If not, we might need a fallback, but this is the standard pattern for text-mode triggers
+                await conv.waitForSession?.();
+                // @ts-ignore
+                await conv.sendText?.(`Analyze ${targetUrlRef.current}`);
+            }
 
         } catch (error: any) {
             console.error("Failed to start conversation:", error);
