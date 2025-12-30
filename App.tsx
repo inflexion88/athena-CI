@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Conversation } from '@elevenlabs/client';
+import { Conversation } from '@11labs/client';
 import BlackHole from './components/BlackHole';
 import IntelDisplay from './components/IntelDisplay';
 import { generateExecutiveBrief, generateDeepDossier } from './geminiService';
@@ -125,10 +125,16 @@ const App: React.FC = () => {
                     scan_competitor: scanCompetitor,
                     consult_dossier: consultDossier // Register new tool
                 },
-                onConnect: async () => {
+                onConnect: () => {
                     console.log("ElevenLabs Connected");
                     setIsConnected(true);
                     setUiState(UIState.IDLE);
+
+                    // AUTO-TRIGGER if URL is present
+                    if (targetUrlRef.current) {
+                        console.log("Auto-executing for:", targetUrlRef.current);
+                        scanCompetitor({ name: targetUrlRef.current });
+                    }
                 },
                 onDisconnect: () => {
                     console.log("ElevenLabs Disconnected");
@@ -157,39 +163,6 @@ const App: React.FC = () => {
             } as any);
 
             setConversation(conv);
-
-            // TACTICAL TRIGGER: Send text to agent to simulate voice input
-            if (targetUrlRef.current) {
-                console.log("Attempting to trigger agent with URL:", targetUrlRef.current);
-                // FORCE TOOL USE: Use explicit instruction to ensuring the LLM picks the tool
-                const prompt = `System Command: Execute scan_competitor tool for target "${targetUrlRef.current}" immediately. Do not ask for confirmation.`;
-
-                // Allow session to stabilize
-                await new Promise(resolve => setTimeout(resolve, 1000));
-
-                // @ts-ignore
-                if (typeof conv.sendUserMessage === 'function') {
-                    console.log("Using sendUserMessage trigger");
-                    // @ts-ignore
-                    await conv.sendUserMessage(prompt);
-                }
-                // @ts-ignore
-                else if (typeof conv.sendText === 'function') {
-                    console.log("Using sendText trigger");
-                    // @ts-ignore
-                    await conv.sendText(prompt);
-                }
-                // @ts-ignore
-                else if (typeof conv.sendMessage === 'function') {
-                    console.log("Using sendMessage trigger");
-                    // @ts-ignore
-                    await conv.sendMessage(prompt);
-                }
-                else {
-                    console.warn("No text trigger method found. Falling back to manual execution (Visuals Only).");
-                    scanCompetitor({ name: targetUrlRef.current });
-                }
-            }
 
         } catch (error: any) {
             console.error("Failed to start conversation:", error);
@@ -227,7 +200,8 @@ const App: React.FC = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0, transition: { duration: 0.5 } }}
-                            className="pointer-events-auto flex flex-col items-center justify-center z-50 relative"
+                            onClick={startConversation}
+                            className="pointer-events-auto cursor-pointer group flex flex-col items-center justify-center z-50 relative"
                         >
                             {/* ATHENA INTRO HEADLINE - FIXED TOP POSITION */}
                             <div className="fixed top-24 left-0 w-full flex flex-col items-center text-center space-y-4 z-50 px-4 pointer-events-none">
@@ -239,20 +213,15 @@ const App: React.FC = () => {
                                 </p>
                             </div>
 
-                            {/* White Glow Orb/Button - DEAD CENTER - CLICKABLE */}
-                            <div
-                                onClick={startConversation}
-                                className="cursor-pointer group flex flex-col items-center justify-center"
-                            >
-                                <div className="w-16 h-16 rounded-full bg-white shadow-[0_0_50px_rgba(255,255,255,0.8)] mb-6 animate-pulse group-hover:scale-110 transition-transform duration-500"></div>
+                            {/* White Glow Orb/Button - DEAD CENTER */}
+                            <div className="w-16 h-16 rounded-full bg-white shadow-[0_0_50px_rgba(255,255,255,0.8)] mb-6 animate-pulse group-hover:scale-110 transition-transform duration-500"></div>
 
-                                <span className="text-black font-bold text-lg tracking-widest bg-white/90 px-6 py-2 shadow-[0_0_30px_rgba(255,255,255,0.6)] transition-all group-hover:bg-white group-hover:shadow-[0_0_50px_rgba(255,255,255,0.9)]">
-                                    CLICK HERE TO BEGIN
-                                </span>
-                                <span className="mt-2 text-xs text-gray-500 tracking-[0.4em] uppercase opacity-70">
-                                    Initialize Intelligence
-                                </span>
-                            </div>
+                            <span className="text-black font-bold text-lg tracking-widest bg-white/90 px-6 py-2 shadow-[0_0_30px_rgba(255,255,255,0.6)] transition-all group-hover:bg-white group-hover:shadow-[0_0_50px_rgba(255,255,255,0.9)]">
+                                CLICK HERE TO BEGIN
+                            </span>
+                            <span className="mt-2 text-xs text-gray-500 tracking-[0.4em] uppercase opacity-70">
+                                Initialize Intelligence
+                            </span>
 
                             {/* TACTICAL INPUT FIELD */}
                             <div className="mt-8 relative w-64 group/input">
@@ -261,7 +230,6 @@ const App: React.FC = () => {
                                     type="text"
                                     value={targetUrl}
                                     onChange={(e) => setTargetUrl(e.target.value)}
-                                    onKeyDown={(e) => e.key === 'Enter' && startConversation()}
                                     placeholder="ENTER TARGET URL..."
                                     className="w-full bg-transparent text-center font-mono text-cyan-500 text-sm uppercase tracking-widest placeholder:text-gray-800 focus:outline-none py-2"
                                 />
@@ -272,10 +240,7 @@ const App: React.FC = () => {
 
                             {/* DYNAMIC BUTTON TEXT based on Input */}
                             {targetUrl && (
-                                <div
-                                    onClick={startConversation}
-                                    className="mt-4 animate-pulse text-[10px] text-cyan-500 uppercase tracking-widest font-mono cursor-pointer hover:text-cyan-400"
-                                >
+                                <div className="mt-4 animate-pulse text-[10px] text-cyan-500 uppercase tracking-widest font-mono">
                                     &gt;&gt; READY TO EXECUTE
                                 </div>
                             )}
