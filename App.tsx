@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Conversation } from '@11labs/client';
+import { Conversation } from '@elevenlabs/client';
 import BlackHole from './components/BlackHole';
 import IntelDisplay from './components/IntelDisplay';
 import { generateExecutiveBrief, generateDeepDossier } from './geminiService';
