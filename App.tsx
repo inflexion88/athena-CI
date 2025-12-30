@@ -160,12 +160,28 @@ const App: React.FC = () => {
 
             // TACTICAL TRIGGER: Send text to agent to simulate voice input
             if (targetUrlRef.current) {
-                // "Whisper" to the agent to trigger the tool naturally
-                // @ts-ignore - Assuming sendText exists on the standard client instance or similar
-                // If not, we might need a fallback, but this is the standard pattern for text-mode triggers
-                await conv.waitForSession?.();
+                console.log("Attempting to trigger agent with URL:", targetUrlRef.current);
+                const prompt = `Analyze ${targetUrlRef.current}`;
+
+                // Allow session to stabilize
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
                 // @ts-ignore
-                await conv.sendText?.(`Analyze ${targetUrlRef.current}`);
+                if (typeof conv.sendText === 'function') {
+                    console.log("Using sendText trigger");
+                    // @ts-ignore
+                    await conv.sendText(prompt);
+                }
+                // @ts-ignore
+                else if (typeof conv.sendMessage === 'function') {
+                    console.log("Using sendMessage trigger");
+                    // @ts-ignore
+                    await conv.sendMessage(prompt);
+                }
+                else {
+                    console.warn("No text trigger method found. Falling back to manual execution (Visuals Only).");
+                    scanCompetitor({ name: targetUrlRef.current });
+                }
             }
 
         } catch (error: any) {
